@@ -2,12 +2,15 @@
 #include <string>
 #include <vector>
 #include <random>
+#include <chrono>
+#include <thread>
+#include <iomanip> 
 
 class Sapo {
 private:
     std::string nome;
     int identificador;
-    int distanciaPercorrida;
+    double distanciaPercorrida;
     int quantidadePulos;
     int provasDisputadas;
     int vitorias;
@@ -15,7 +18,7 @@ private:
     int quantidadeTotalPulos;
 
 public:
-    static int distanciaTotalCorrida;
+    static double distanciaTotalCorrida;
 
     Sapo(std::string nome, int identificador) 
         : nome(nome), identificador(identificador), distanciaPercorrida(0), quantidadePulos(0), 
@@ -24,7 +27,7 @@ public:
     // getters...
     std::string getNome() const { return nome; }
     int getIdentificador() const { return identificador; }
-    int getDistanciaPercorrida() const { return distanciaPercorrida; }
+    double getDistanciaPercorrida() const { return distanciaPercorrida; }
     int getQuantidadePulos() const { return quantidadePulos; }
     int getProvasDisputadas() const { return provasDisputadas; }
     int getVitorias() const { return vitorias; }
@@ -35,9 +38,10 @@ public:
     void pular() {
         static std::random_device rd;
         static std::mt19937 gen(rd());
-        std::uniform_int_distribution<> dis(1, 10);
+        std::uniform_real_distribution<> dis(0.5, 2.0);  // Pulo entre 0.5 e 2.0 metros
 
-        int distanciaPulo = dis(gen);
+        double distanciaPulo = dis(gen);
+        distanciaPulo = std::round(distanciaPulo * 100.0) / 100.0;
         distanciaPercorrida += distanciaPulo;
         quantidadePulos++;
         quantidadeTotalPulos++;
@@ -55,34 +59,31 @@ public:
     }
 };
 
-int Sapo::distanciaTotalCorrida = 100;
+double Sapo::distanciaTotalCorrida = 20.0;
 
 void realizarCorrida(std::vector<Sapo>& sapos) {
     bool corridaTerminada = false;
-    std::vector<Sapo*> vencedores;
+    Sapo* vencedor = nullptr;
 
     while (!corridaTerminada) {
         for (Sapo& sapo : sapos) {
             sapo.pular();
+            std::cout << "O sapo " << sapo.getNome() << " pulou! Distância percorrida: " 
+                      << std::fixed << std::setprecision(2) << sapo.getDistanciaPercorrida() 
+                      << " metros." << std::endl;
 
             if (sapo.getDistanciaPercorrida() >= Sapo::distanciaTotalCorrida) {
-                vencedores.push_back(&sapo);
+                vencedor = &sapo;
                 corridaTerminada = true;
+                break;
             }
         }
+        std::this_thread::sleep_for(std::chrono::seconds(1));
     }
 
-    // verifica se houve empate ou um único vencedor
-    if (vencedores.size() == 1) {
-        vencedores[0]->incrementarVitorias();
-        std::cout << "O sapo " << vencedores[0]->getNome() << " venceu a corrida!" << std::endl;
-    } else {
-        std::cout << "A corrida terminou em empate entre os sapos: ";
-        for (Sapo* sapo : vencedores) {
-            sapo->incrementarEmpates();
-            std::cout << sapo->getNome() << " ";
-        }
-        std::cout << std::endl;
+    if (vencedor) {
+        vencedor->incrementarVitorias();
+        std::cout << "O sapo " << vencedor->getNome() << " venceu a corrida!" << std::endl;
     }
 
     // atualiza estatísticas e reseta corrida para todos os sapos
@@ -93,9 +94,25 @@ void realizarCorrida(std::vector<Sapo>& sapos) {
 }
 
 int main() {
-    std::vector<Sapo> sapos = { Sapo("CrazyFrog", 1), Sapo("Cururu", 2) };
+    int quantidadeSapos;
+    std::cout << "Digite o número de sapos participantes: ";
+    std::cin >> quantidadeSapos;
+    std::cin.ignore(); // para limpar o buffer do teclado
 
-    realizarCorrida(sapos);
+    std::vector<Sapo> sapos;
+    for (int i = 0; i < quantidadeSapos; ++i) {
+        std::string nome;
+        std::cout << "Digite o nome do sapo " << (i + 1) << ": ";
+        std::getline(std::cin, nome);
+        sapos.emplace_back(nome, i + 1);
+    }
+
+    while (true) {
+        realizarCorrida(sapos);
+        std::cout << "Pressione Enter para reiniciar a corrida...";
+        std::cin.ignore();
+    }
 
     return 0;
 }
+
