@@ -47,5 +47,7 @@ Pressione Enter para reiniciar a corrida...
 
 ## 🔧 Estrutura do Código
 Classe Sapo: Representa cada sapo na corrida, com atributos e métodos para gerenciar suas estatísticas e comportamento durante a corrida.
+
 Função realizarCorrida: Gerencia a lógica da corrida, incluindo os pulos dos sapos e a determinação do vencedor.
+
 Função main: Ponto de entrada do programa, responsável por configurar a corrida e iniciar a simulação.
