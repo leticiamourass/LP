@@ -13,23 +13,33 @@ Este projeto implementa uma simulação simples de corrida de sapos usando C++. 
 1. Clone o repositório para sua máquina local:
    ```bash
    git clone https://github.com/seu-usuario/seu-repositorio.git
+   
 2. Navegue até o diretório do projeto:
 cd seu-repositorio
+
 3. Compile o código:
 g++ -o corrida_de_sapos main.cpp
+
 4. Execute o programa:
 ./corrida_de_sapos
+
 5. Siga as instruções na tela para adicionar sapos e iniciar a corrida.
 
 ## 📊 Exemplo de Saída
 Digite o número de sapos participantes: 3
+
 Digite o nome do sapo 1: Frodo
+
 Digite o nome do sapo 2: Sam
+
 Digite o nome do sapo 3: Pippin
 
 O sapo Frodo pulou! Distância percorrida: 1.75 metros.
+
 O sapo Sam pulou! Distância percorrida: 1.23 metros.
+
 O sapo Pippin pulou! Distância percorrida: 1.84 metros.
+
 ...
 
 O sapo Pippin venceu a corrida!
